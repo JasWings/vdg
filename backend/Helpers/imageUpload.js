@@ -48,3 +48,21 @@ export const uploadImageToDrive = async (fileBuffer, originalname, mimeType, fol
         throw new Error('Error uploading image: ' + error.message);
     }
 };
+
+
+
+// Function to delete image from Google Drive
+export const deleteImageFromDrive = async (imageUrl) => {
+    const fileId = imageUrl.split('id=')[1]; // Extract file ID from URL
+
+    try {
+        await drive.files.delete({
+            fileId,
+            auth,
+        });
+        console.log('Image deleted successfully.');
+    } catch (error) {
+        console.error('Error deleting image:', error.message);
+        throw new Error('Error deleting image: ' + error.message);
+    }
+};
