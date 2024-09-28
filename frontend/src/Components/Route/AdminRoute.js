@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../Context/auth';
-import axios from "axios";
-import { Outlet } from "react-router-dom";
+import axios from 'axios';
+import { Outlet, Navigate } from 'react-router-dom'; // Added Navigate for redirection
 import Spinner from '../../Utils/Spinner';
-
 
 export default function AdminRoute() {
   const [ok, setOk] = useState(false);
@@ -15,9 +14,11 @@ export default function AdminRoute() {
       try {
         const res = await axios.get(`${backendUrl}/auth/admindashboard`, {
           headers: {
-            Authorization: auth.token,
+            Authorization: `Bearer ${auth?.token}`, // Added 'Bearer' prefix
           },
         });
+
+        // Assuming your backend returns an 'ok' property
         if (res.data.ok) {
           setOk(true);
         } else {
@@ -29,12 +30,18 @@ export default function AdminRoute() {
       }
     };
 
-    // Check authentication only if auth.token is present
+
     if (auth?.token) {
       authCheck();
+    } else {
+      setOk(false);
     }
   }, [auth?.token, backendUrl]);
 
-  // Return the Outlet or Spinner based on the value of ok
-  return ok ? <Outlet /> : <Spinner path=''/>;
+  
+  if (!ok) {
+    return <Spinner path='' />;
+  }
+
+  return <Outlet />;
 }

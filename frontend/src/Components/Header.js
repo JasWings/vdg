@@ -20,7 +20,6 @@ import { Typography } from '@mui/material';
 import { toast } from 'react-toastify';
 import Cookies from 'js-cookie';
 
-
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
   borderRadius: theme.shape.borderRadius,
@@ -65,11 +64,10 @@ export default function Header() {
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
   const navigate = useNavigate();
   
-  // State for cart items
-  const [cartItems, setCartItems] = React.useState(0); // Initialize with the number of items in the cart
-
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+
+  const [cartItems, setCartItems] = React.useState(0);
 
   const handleProfileMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -87,16 +85,18 @@ export default function Header() {
 
     toast.success('Logout Successfully');
     setTimeout(() => {
-      navigate("/login"); // Redirect to home page
+      navigate("/login"); // Redirect to login page
     }, 500);
   };
 
   const handleMenuClose = (route) => {
     setAnchorEl(null);
-    
-    if (typeof route === 'string') {
-        navigate(route === 'dashboard' ? (auth.user.role === 1 ? '/dashboard/admin' : '/dashboard/user') : route);
-    }
+
+    const targetRoute = route === 'dashboard' 
+      ? (auth.user.role === 1 ? '/dashboard/admin' : '/dashboard/user') 
+      : route;
+
+    navigate(targetRoute);
   };
 
   const handleMobileMenuClose = () => {
@@ -116,14 +116,19 @@ export default function Header() {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-        {auth && auth.user ? [
-      <MenuItem key="dashboard" onClick={() => handleMenuClose('dashboard')}>Dashboard</MenuItem>,
-      <MenuItem key="logout" onClick={handleLogout}>Logout</MenuItem>
-    ] : (
-      <MenuItem key="login" onClick={() => handleMenuClose('/login')}>My account</MenuItem>
-    )}
+      {auth && auth.user ? (
+        <>
+          <MenuItem key="dashboard" onClick={() => handleMenuClose('dashboard')}>Dashboard</MenuItem>
+          <MenuItem key="logout" onClick={handleLogout}>Logout</MenuItem>
+        </>
+      ) : (
+        <MenuItem key="login" onClick={() => handleMenuClose('/login')}>My account</MenuItem>
+      )}
     </Menu>
   );
+
+
+
 
   const renderMobileMenu = (
     <Menu
