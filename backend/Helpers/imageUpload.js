@@ -39,7 +39,7 @@ export const uploadImageToDrive = async (fileBuffer, originalname, mimeType, fol
         });
 
         const fileId = driveResponse.data.id;
-        const imageUrl = `https://drive.google.com/uc?id=${fileId}`;
+        const imageUrl = `https://drive.google.com/thumbnail?id=${fileId}&sz=w1000`;
         // console.log('Image uploaded successfully. File ID:', fileId);
         // console.log('Image URL:', imageUrl);
         return imageUrl;
