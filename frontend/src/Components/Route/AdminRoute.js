@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../Context/auth';
 import axios from 'axios';
-import { Outlet, Navigate } from 'react-router-dom'; // Added Navigate for redirection
+import { Outlet } from 'react-router-dom'; 
 import Spinner from '../../Utils/Spinner';
 
 export default function AdminRoute() {
@@ -14,11 +14,10 @@ export default function AdminRoute() {
       try {
         const res = await axios.get(`${backendUrl}/auth/admindashboard`, {
           headers: {
-            Authorization: `Bearer ${auth?.token}`, // Added 'Bearer' prefix
+            Authorization: auth?.token, 
           },
         });
 
-        // Assuming your backend returns an 'ok' property
         if (res.data.ok) {
           setOk(true);
         } else {

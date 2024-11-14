@@ -10,10 +10,18 @@ export const createProductController = async (req, res) => {
 
     try {
         const folderId = "1H-s0TX-oYdEuZeoRMB5QuyulSuSeP4fc";
-        const { name, description, price, category, subcategory, quantity, shipping } = req.body;
+        const { name, description, price, category, subcategory, quantity, shipping, gender,saleprice } = req.body;
 
-        if (!name || !description || !price || !category || !subcategory || !quantity) {
+        if (!name || !description || !price || !category || !subcategory || !quantity || !gender) {
             return res.status(400).send({ message: 'All fields are required' });
+        }
+
+        const existingCategory = await Product.findOne({ name });
+        if (existingCategory) {
+            return res.status(409).send({
+                success: false,
+                message: 'Product already exists',
+            });
         }
 
         if (req.file) {
@@ -28,7 +36,7 @@ export const createProductController = async (req, res) => {
             }
         }
 
-        const product = new Product({ name, description, price, category, subcategory, quantity, imageUrl, shipping });
+        const product = new Product({ name, description, price, category, subcategory, quantity, imageUrl, shipping, gender, saleprice });
         await product.save();
 
         res.status(201).send({
@@ -60,7 +68,7 @@ export const updateProductController = async (req, res) => {
     try {
         const folderId = "1H-s0TX-oYdEuZeoRMB5QuyulSuSeP4fc";
         const { id } = req.params;
-        const { name, description, price, category, subcategory, quantity, shipping, isactive } = req.body;
+        const { name, description, price, category, subcategory, quantity, shipping, isactive, gender, saleprice } = req.body;
 
         if (!name || !description || !price || !category || !subcategory || !quantity) {
             return res.status(400).send({ message: 'All fields are required for update' });
@@ -71,7 +79,7 @@ export const updateProductController = async (req, res) => {
             return res.status(404).send({ success: false, message: 'Product not found' });
         }
 
-        const productData = { name, description, price, category, subcategory, quantity, shipping, isactive };
+        const productData = { name, description, price, category, subcategory, quantity, shipping, isactive, gender, saleprice };
 
         if (req.file) {
             if (product.imageUrl) {
@@ -103,7 +111,7 @@ export const updateProductController = async (req, res) => {
 
 export const productController = async (req, res) => {
     try {
-        const products = await Product.find({ isactive: true }); 
+        const products = await Product.find({}); 
         res.status(200).send({
             success: true,
             message: 'All active products retrieved successfully',
@@ -118,6 +126,42 @@ export const productController = async (req, res) => {
         });
     }
 };
+
+export const productControlleruser = async (req, res) => {
+    try {
+        const { categoryId, subcategoryId, gender } = req.query;
+
+        const query = { isactive: true };
+
+        if (categoryId) {
+            query.category = categoryId;
+        }
+
+        if (subcategoryId) {
+            query.subcategory = subcategoryId; 
+        }
+
+        if (gender) {
+            query.gender = gender;
+        }
+
+        const products = await Product.find(query);
+
+        res.status(200).send({
+            success: true,
+            message: 'Active products retrieved successfully',
+            products,
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send({
+            success: false,
+            message: 'An error occurred while retrieving products',
+            error: error.message,
+        });
+    }
+};
+
 
 // Get single product
 export const singleProductController = async (req, res) => {

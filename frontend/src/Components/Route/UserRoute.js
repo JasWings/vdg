@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../Context/auth';
 import axios from 'axios';
-import { Outlet, Navigate } from 'react-router-dom'; // Added Navigate for potential redirection
+import { Outlet } from 'react-router-dom'; // Added Navigate for potential redirection
 import Spinner from '../../Utils/Spinner';
 
 export default function PrivateRoute() {
@@ -14,7 +14,7 @@ export default function PrivateRoute() {
       try {
         const res = await axios.get(`${backendUrl}/auth/userdashboard`, {
           headers: {
-            Authorization: `Bearer ${auth?.token}`, // Added 'Bearer' prefix
+            Authorization: auth?.token
           },
         });
 

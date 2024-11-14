@@ -4,7 +4,7 @@ import { createSliderController, deleteSliderController, sliderController } from
 import { isAdmin, requireSignIn } from '../Middleware/AuthMiddleware.js';
 
 const router = express.Router();
-const upload = multer({ storage: multer.memoryStorage() }); // Adjust storage as needed
+const upload = multer({ storage: multer.memoryStorage() }); 
 
 router.post('/', requireSignIn, isAdmin, upload.single('image'), createSliderController);
 router.get('/', sliderController);

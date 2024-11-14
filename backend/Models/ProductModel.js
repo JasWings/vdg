@@ -13,6 +13,13 @@ const productSchema = new mongoose.Schema({
         type:Number,
         required:true,
     },
+    saleprice:{
+        type:Number,
+        required:true,
+    },
+    gender:{
+        type:String,
+    },
     category:{
         type:mongoose.ObjectId,
         ref:'category',

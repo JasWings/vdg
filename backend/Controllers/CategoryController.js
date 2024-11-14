@@ -15,6 +15,14 @@ export const createCategoryController = async (req, res) => {
             return res.status(400).send({ message: 'Name is required' });
         }
 
+        const existingCategory = await Category.findOne({ name });
+        if (existingCategory) {
+            return res.status(409).send({
+                success: false,
+                message: 'Category already exists',
+            });
+        }
+
         // Only upload the image if a file is provided
         if (req.file) {
             try {
