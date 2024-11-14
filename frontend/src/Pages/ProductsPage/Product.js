@@ -1,4 +1,4 @@
-import React, { useState, } from 'react';
+import React, { useEffect, useState, } from 'react';
 import SelectionModal from './SelectionModal';
 import {
   Grid,
@@ -12,6 +12,7 @@ import {
 import { styled } from '@mui/material/styles';
 import Layout from '../../Components/Layout';
 import axios from 'axios';
+import { useLocation } from 'react-router-dom'; 
 
 const StyledCard = styled(Card)(({ theme }) => ({
   borderRadius: '12px',
@@ -93,9 +94,20 @@ const Product = () => {
   const [rowsPerPage, setRowsPerPage] = useState(16);
   const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
+ 
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const categoryId = searchParams.get('categoryId'); 
+
   const handleModalClose = () => {
     setModalOpen(false);
   };
+
+  useEffect(() => {
+    if (categoryId) {
+      fetchProducts({ categoryId });
+    }
+  }, [categoryId]);
 
   const handleSelect = async (options) => {
     setSelectedOptions(options);
@@ -107,6 +119,7 @@ const Product = () => {
     try {
       const response = await axios.get(`${BACKEND_URL}/product`, {
         params: {
+          categoryId: categoryId,
           subcategoryId: options.subcategory,
           gender: options.gender,
         },

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Layout from '../../../Components/Layout';
-import SelectionModal from '../Dress/SelectionModal';
+import SelectionModal from './SelectionModal';
 import { Grid, Card, CardContent, Typography, CardMedia, CardActionArea } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
@@ -77,7 +77,7 @@ const StyledTypographyDescription = styled(Typography)({
   color: '#555',
 });
 
-const Dress = () => {
+const Product = () => {
   const [modalOpen, setModalOpen] = useState(true);
   const [selectedOptions, setSelectedOptions] = useState(null);
 
@@ -121,4 +121,4 @@ const Dress = () => {
   );
 };
 
-export default Dress;
+export default Product;

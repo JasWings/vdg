@@ -1,6 +1,20 @@
 import React, { useState } from 'react';
-import { Modal, Box, Typography, TextField, Button, FormControl, FormLabel, RadioGroup, Radio, FormControlLabel, Grid, IconButton } from '@mui/material';
+import {
+  Modal,
+  Box,
+  Typography,
+  TextField,
+  Button,
+  FormControl,
+  FormLabel,
+  RadioGroup,
+  Radio,
+  FormControlLabel,
+  Grid,
+  IconButton,
+} from '@mui/material';
 import { Male, Female, Close } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
 
 const modalStyle = {
   position: 'absolute',
@@ -12,7 +26,6 @@ const modalStyle = {
   borderRadius: 2,
   boxShadow: 24,
   p: 4,
-  border: '2px solid navy', 
 };
 
 const iconStyle = {
@@ -22,24 +35,31 @@ const iconStyle = {
 const SelectionModal = ({ open, handleClose, onSelect }) => {
   const [gender, setGender] = useState('');
   const [age, setAge] = useState('');
+  const [error, setError] = useState('');
+  const navigate = useNavigate(); 
 
-  // Handle form field changes
   const handleChange = (e) => {
-    if (e.target.name === 'gender') {
-      setGender(e.target.value);
-    } else if (e.target.name === 'age') {
-      setAge(e.target.value);
+    const { name, value } = e.target;
+    if (name === 'gender') {
+      setGender(value);
+    } else if (name === 'age') {
+      setAge(value);
     }
   };
 
   const handleSubmit = () => {
+    if (!gender || !age) {
+      setError('Please fill in all fields.');
+      return;
+    }
     onSelect({ gender, age });
-    handleClose(); // Close the modal directly without validation
+    handleClose();
   };
 
-  // Allow closing of the modal directly
-  const handleModalClose = (event, reason) => {
-    handleClose(); // Close the modal directly without validation
+  const handleModalClose = () => {
+    handleClose();
+    setError(''); 
+    navigate('/'); 
   };
 
   return (
@@ -48,17 +68,25 @@ const SelectionModal = ({ open, handleClose, onSelect }) => {
       onClose={handleModalClose}
       aria-labelledby="modal-title"
       aria-describedby="modal-description"
+      disableEscapeKeyDown
+      BackdropProps={{ onClick: (e) => e.stopPropagation() }} 
     >
       <Box sx={modalStyle}>
         <IconButton
-          onClick={handleClose}
+          onClick={handleModalClose}
           sx={{ position: 'absolute', top: 10, right: 10 }}
+          aria-label="close"
         >
           <Close />
         </IconButton>
         <Typography id="modal-title" variant="h6" component="h2" sx={{ mb: 2 }}>
           Choose Your Options
         </Typography>
+        {error && (
+          <Typography color="error" sx={{ mb: 2 }}>
+            {error}
+          </Typography>
+        )}
         <FormControl component="fieldset" fullWidth sx={{ mb: 2 }}>
           <FormLabel component="legend">Gender</FormLabel>
           <RadioGroup
@@ -72,14 +100,24 @@ const SelectionModal = ({ open, handleClose, onSelect }) => {
                 <FormControlLabel
                   value="boy"
                   control={<Radio />}
-                  label={<Box display="flex" alignItems="center"><Male sx={iconStyle} /><Typography sx={{ ml: 1 }}>Boy</Typography></Box>}
+                  label={
+                    <Box display="flex" alignItems="center">
+                      <Male sx={iconStyle} />
+                      <Typography sx={{ ml: 1 }}>Male</Typography>
+                    </Box>
+                  }
                 />
               </Grid>
               <Grid item xs={6}>
                 <FormControlLabel
                   value="girl"
                   control={<Radio />}
-                  label={<Box display="flex" alignItems="center"><Female sx={iconStyle} /><Typography sx={{ ml: 1 }}>Girl</Typography></Box>}
+                  label={
+                    <Box display="flex" alignItems="center">
+                      <Female sx={iconStyle} />
+                      <Typography sx={{ ml: 1 }}>Female</Typography>
+                    </Box>
+                  }
                 />
               </Grid>
             </Grid>
@@ -94,6 +132,7 @@ const SelectionModal = ({ open, handleClose, onSelect }) => {
           value={age}
           onChange={handleChange}
           sx={{ mb: 2 }}
+          inputProps={{ min: 1 }}
         />
         <Button
           variant="contained"
